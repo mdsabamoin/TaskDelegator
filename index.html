@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>UI for Week Off</title>
+</head>
+
+<body class="bg-gray-100 py-10">
+    <div class="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-xl">
+        <h2 class="text-2xl font-semibold mb-6">Add Work Calendar</h2>
+
+        <div class="mb-4 flex items-center gap-2">
+            <input id="halfDayToggle" type="checkbox" class="w-5 h-5 cursor-pointer" />
+            <label for="halfDayToggle" class="text-gray-700 text-lg cursor-pointer">
+                Half working day & half weekend
+            </label>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full border-separate border-spacing-0 text-center">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 text-sm">
+                        <th class="border p-3 text-left">Day</th>
+                        <th class="border p-3">All</th>
+                        <th class="border p-3">1st</th>
+                        <th class="border p-3">2nd</th>
+                        <th class="border p-3">3rd</th>
+                        <th class="border p-3">4th</th>
+                        <th class="border p-3">5th</th>
+                    </tr>
+                </thead>
+
+                <tbody id="weekTable" class="text-sm">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 flex gap-3">
+            <button class="px-6 py-2 bg-blue-600 text-white rounded">Save</button>
+            <button class="px-6 py-2 bg-gray-300 rounded">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const tableBody = document.getElementById("weekTable");
+        const TableToggle = document.getElementById("halfDayToggle");
+
+        function createRow(day) {
+            return `
+        <tr>
+          <td class="border p-3 text-left font-medium">${day}</td>
+          ${createCells()}
+        </tr>
+      `;
+        }
+
+        function createCells() {
+            let cells = "";
+            for (let i = 0; i < 6; i++) {
+                cells += `
+          <td class="border p-3">
+            <div class="flex justify-center items-center gap-2">
+              <input type="checkbox" class="dayCheck w-4 h-4 cursor-pointer" />
+              <select class="daySelect hidden border rounded p-1 text-sm">
+                <option>Full Day</option>
+                <option>1st Half</option>
+                <option>2nd Half</option>
+              </select>
+            </div>
+          </td>
+        `;
+            }
+            return cells;
+        }
+
+        
+        document.addEventListener("change", (e) => {
+            if (e.target.classList.contains("dayCheck")) {
+                const row = e.target.closest("tr");
+                const checks = [...row.querySelectorAll(".dayCheck")];
+                const allCheck = checks[0];
+
+                
+                if (e.target === allCheck) {
+                    checks.slice(1).forEach(ch => ch.checked = allCheck.checked);
+                }
+            }
+        });
+
+        days.forEach(day => {
+            tableBody.insertAdjacentHTML("beforeend", createRow(day));
+        });
+
+        TableToggle.addEventListener("change", () => {
+            const selects = document.querySelectorAll(".daySelect");
+            if (TableToggle.checked) {
+                selects.forEach(sel => sel.classList.remove("hidden"));
+            } else {
+                selects.forEach(sel => sel.classList.add("hidden"));
+            }
+        });
+    </script>
+</body>
+
+</html>
